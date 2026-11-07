@@ -4,6 +4,11 @@ html {
     margin-inline: auto;
 }
 
+.dark-mode {
+    background-color: black;
+    color: white;
+}
+
 .random-scripture {
     font-size: 24px;
     height: 10rem;
@@ -43,4 +48,12 @@ html {
 
 #scripture-books {
     min-width: 14rem;
+}
+
+.correct {
+    color: green;
+}
+
+.incorrect {
+color: red;
 }

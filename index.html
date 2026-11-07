@@ -6,13 +6,14 @@
     <title>Scriptle</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body id="body">
     <fieldset>
         <legend class="title">Scriptle</legend>
         <!-- Menu / Select scriptures to guess -->
         <section id="menu">
             <form>
                 <h3>Select which books of scripture you want to guess from:</h3>
+                <!-- Old Testament books -->
                 <fieldset>
                     <legend>Old Testament <button type="button" onclick="selectAll('ot-books')">Select All</button> <button type="button" onclick="unselectAll('ot-books')">Unselect All</button></legend>
                     <input type="checkbox" id="Genesis" value="Genesis" name="book-select ot-books"><label for="Genesis">Genesis</label> | 
@@ -55,6 +56,7 @@
                     <input type="checkbox" id="Zechariah" value="Zechariah" name="book-select ot-books"><label for="Zechariah">Zechariah</label> | 
                     <input type="checkbox" id="Malachi" value="Malachi" name="book-select ot-books"><label for="Malachi">Malachi</label>
                 </fieldset>
+                <!-- New Testament books -->
                 <fieldset>
                     <legend>New Testament <button type="button" onclick="selectAll('nt-books')">Select All</button> <button type="button" onclick="unselectAll('nt-books')">Unselect All</button></legend>
                     <input type="checkbox" id="Matthew" value="Matthew" name="book-select nt-books"><label for="Matthew">Matthew</label> | 
@@ -85,6 +87,7 @@
                     <input type="checkbox" id="Jude" value="Jude" name="book-select nt-books"><label for="Jude">Jude</label> | 
                     <input type="checkbox" id="Revelation" value="Revelation" name="book-select nt-books"><label for="Revelation">Revelation</label>
                 </fieldset>
+                <!-- Book of Mormon books -->
                 <fieldset>
                     <legend>Book of Mormon <button type="button" onclick="selectAll('bom-books')">Select All</button> <button type="button" onclick="unselectAll('bom-books')">Unselect All</button></legend>
                     <input type="checkbox" id="1 Nephi" value="1 Nephi" name="book-select bom-books"><label for="1 Nephi">1 Nephi</label> | 
@@ -103,6 +106,7 @@
                     <input type="checkbox" id="Ether" value="Ether" name="book-select bom-books"><label for="Ether">Ether</label> | 
                     <input type="checkbox" id="Moroni" value="Moroni" name="book-select bom-books"><label for="Moroni">Moroni</label>
                 </fieldset>
+                <!-- Pearl of Great Price & books -->
                 <fieldset>
                     <legend>Pearl of Great Price / Doctrine and Covenants <button type="button" onclick="selectAll('other-books')">Select All</button> <button type="button" onclick="unselectAll('other-books')">Unselect All</button></legend>
                     <input type="checkbox" id="Moses" value="Moses" name="book-select other-books"><label for="Moses">Moses</label> | 
@@ -113,14 +117,11 @@
                     <input type="checkbox" id="Doctrine and Covenants" value="Doctrine and Covenants" name="book-select other-books"><label for="Doctrine and Covenants">Doctrine and Covenants</label>
 
                 </fieldset>
-                <!-- <input type="checkbox" id="select-ot" value="Old Testament" name="book-select"><label for="select-ot">Old Testament</label>
-                <br>
-                <input type="checkbox" id="select-nt" value="New Testament"name="book-select"><label for="select-nt">New Testament</label>
-                <br>
-                <input type="checkbox" id="select-bom" value="Book of Mormon" name="book-select"><label for="select-bom">Book of Mormon</label> -->
+                
                 <br><br>
 
-                <button type="button" id="start-game" class="submit-button" onclick="startGame()">Start Game</button>
+                <button type="button" id="start-game" class="submit-button" onclick="startGame()">Start Game</button><br><br>
+                <button type="button" id="start-game" onclick="goToSettings()">Advanced Settings</button>
             </form>
         </section>
 
@@ -137,6 +138,17 @@
             </form>
             <p id="score"></p>
             <br><br><br>
+            <button type="button" id="return-to-menu" onclick="returnToMenu()" class="centered">Return To Menu</button>
+            <button id="history-button" onclick="toggleHistory()">Show History</button>
+            <div id="history" hidden></div>
+        </section>
+
+        <!-- Advanced settings menu -->
+        <section id="settings" hidden>
+            <button id="dark-mode-button" onclick="toggleDarkMode()">Enable Dark Mode</button><br>
+            <button id="balance-mode-button" onclick="toggleBalanceMode()">Enable Enhanced Balance Mode</button><br>
+            <span>*Makes it so all books have an equal chance of being selected rather than larger books like Alma or Psalms being used so often</span>
+            <br><br>
             <button type="button" id="return-to-menu" onclick="returnToMenu()" class="centered">Return To Menu</button>
         </section>
     </fieldset>
@@ -163,6 +175,10 @@
         let totalGuessed;
         let guess;
         let correctAnswer;
+        let applicableBooks;
+        let enhancedBalance = false;
+        let scripturesByBook;
+        let history = document.getElementById('history');
         fetch('./scriptures.json').then(response => response.json()).then(scriptures => scripturesAll = scriptures);
 
         function startGame() {
@@ -173,12 +189,20 @@
                 return;
             };
 
+            // Group scriptures by book (for enhanced mode)
+            scripturesByBook = new Map();
+
+            for (const verse of scripturesPool) {
+                if (!scripturesByBook.has(verse.book_title)) {
+                    scripturesByBook.set(verse.book_title, []);
+                }
+                scripturesByBook.get(verse.book_title).push(verse);
+            }
+
             // Get book titles into selectbox
             let answerBox = document.getElementById('scripture-books');
             answerBox.replaceChildren();
-            let applicableBooks = new Set(
-                scripturesPool.map(verse => verse.book_title)
-            );
+            applicableBooks = [...scripturesByBook.keys()]
             applicableBooks.forEach(bookTitle => {
                 let option = document.createElement('option');
                 option.value = bookTitle;
@@ -186,11 +210,16 @@
                 answerBox.append(option);
             });
 
-            // Initialize score and first random scripture
+            // Initialize score, and first random scripture
             correctNum = 0;
             totalGuessed = 0;
             document.getElementById('score').textContent = ''
             getRandomScripture();
+
+            // Initialize history
+            history.replaceChildren();
+            document.getElementById('history').hidden = true;
+            document.getElementById('history-button').textContent = 'Show History';
 
             // Change visible screen
             document.getElementById('menu').hidden = true;
@@ -200,6 +229,13 @@
         function returnToMenu() {
             document.getElementById('game').hidden = true;
             document.getElementById('menu').hidden = false;
+            document.getElementById('settings').hidden = true;
+        };
+
+        function goToSettings() {
+            document.getElementById('game').hidden = true;
+            document.getElementById('menu').hidden = true;
+            document.getElementById('settings').hidden = false;
         };
 
         function getSelectedScriptures() {
@@ -208,8 +244,20 @@
         };
 
         function getRandomScripture() {
-            const randomIndex = Math.floor(Math.random() * scripturesPool.length);
-            scriptureCurrent = scripturesPool[randomIndex];
+            if (!enhancedBalance) {
+                // Regular mode
+                const randomIndex = Math.floor(Math.random() * scripturesPool.length);
+                scriptureCurrent = scripturesPool[randomIndex];
+            } else {
+                // Enhanced balance mode
+                const randomBook = applicableBooks[Math.floor(Math.random() * applicableBooks.length)];
+
+                const versesFromBook = scripturesByBook.get(randomBook);
+                const randomIndex = Math.floor(Math.random() * versesFromBook.length);
+
+                scriptureCurrent = versesFromBook[randomIndex];
+            }
+            
 
             document.getElementById('random-scripture').textContent = scriptureCurrent.scripture_text;
             correctAnswer = scriptureCurrent.book_title;
@@ -219,17 +267,24 @@
             totalGuessed += 1;
             guess = document.getElementById('scripture-books').value;
 
+            let historyEntry = document.createElement('p');
+            historyEntry.textContent = scriptureCurrent.verse_title;
             if (guess == correctAnswer) {
                 correctNum += 1;
+                historyEntry.classList.add('correct');
+            } else {
+                historyEntry.classList.add('incorrect');
             };
+            history.append(historyEntry);
 
-            document.getElementById('score').textContent = `${correctNum} / ${totalGuessed} (${correctNum / totalGuessed * 100}%)`;
+            document.getElementById('score').textContent = `${correctNum} / ${totalGuessed} (${(correctNum / totalGuessed * 100).toFixed(2)}%)`;
             document.getElementById('correct-answer').textContent = scriptureCurrent.verse_title;
 
             setTimeout(() => {
                 document.getElementById('correct-answer').textContent = '';
                 getRandomScripture();
             },1000); 
+
         };
 
         function selectAll(book) {
@@ -244,6 +299,40 @@
             });
         };
         
+        function toggleHistory() {
+            let historyButton = document.getElementById('history-button');
+            if (history.hidden == true) {
+                history.hidden = false;
+                historyButton.textContent = 'Hide History';
+            } else {
+                history.hidden = true;
+                historyButton.textContent = 'Show History';
+            };
+        };
+
+        function toggleDarkMode() {
+            body = document.getElementById('body');
+            darkModeButton = document.getElementById('dark-mode-button');
+            if (!body.classList.contains('dark-mode')) {
+                body.classList.add('dark-mode');
+                darkModeButton.textContent = 'Disable Dark Mode';
+            } else {
+                body.classList.remove('dark-mode');
+                darkModeButton.textContent = 'Enable Dark Mode';
+            }
+        }
+
+        function toggleBalanceMode() {
+            body = document.getElementById('body');
+            balanceModeButton = document.getElementById('balance-mode-button');
+            if (!enhancedBalance) {
+                enhancedBalance = true;
+                balanceModeButton.textContent = 'Disable Enhanced Balance Mode';
+            } else {
+                enhancedBalance = false;
+                balanceModeButton.textContent = 'Enable Enhanced Balance Mode';
+            }
+        }
     </script>
 </body>
 </html>
