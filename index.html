@@ -8,19 +8,109 @@
 </head>
 <body>
     <fieldset>
-        <legend>Scriptle</legend>
+        <legend class="title">Scriptle</legend>
         <!-- Menu / Select scriptures to guess -->
         <section id="menu">
             <form>
                 <h3>Select which books of scripture you want to guess from:</h3>
-                <input type="checkbox" id="select-ot" value="Old Testament" name="book-select"><label for="select-ot">Old Testament</label>
+                <fieldset>
+                    <legend>Old Testament <button type="button" onclick="selectAll('ot-books')">Select All</button> <button type="button" onclick="unselectAll('ot-books')">Unselect All</button></legend>
+                    <input type="checkbox" id="Genesis" value="Genesis" name="book-select ot-books"><label for="Genesis">Genesis</label> | 
+                    <input type="checkbox" id="Exodus" value="Exodus" name="book-select ot-books"><label for="Exodus">Exodus</label> | 
+                    <input type="checkbox" id="Leviticus" value="Leviticus" name="book-select ot-books"><label for="Leviticus">Leviticus</label> | 
+                    <input type="checkbox" id="Numbers" value="Numbers" name="book-select ot-books"><label for="Numbers">Numbers</label> | 
+                    <input type="checkbox" id="Deuteronomy" value="Deuteronomy" name="book-select ot-books"><label for="Deuteronomy">Deuteronomy</label> | 
+                    <input type="checkbox" id="Joshua" value="Joshua" name="book-select ot-books"><label for="Joshua">Joshua</label> | 
+                    <input type="checkbox" id="Judges" value="Judges" name="book-select ot-books"><label for="Judges">Judges</label> | 
+                    <input type="checkbox" id="Ruth" value="Ruth" name="book-select ot-books"><label for="Ruth">Ruth</label> | 
+                    <input type="checkbox" id="1 Samuel" value="1 Samuel" name="book-select ot-books"><label for="1 Samuel">1 Samuel</label> | 
+                    <input type="checkbox" id="2 Samuel" value="2 Samuel" name="book-select ot-books"><label for="2 Samuel">2 Samuel</label> | 
+                    <input type="checkbox" id="1 Kings" value="1 Kings" name="book-select ot-books"><label for="1 Kings">1 Kings</label> | 
+                    <input type="checkbox" id="2 Kings" value="2 Kings" name="book-select ot-books"><label for="2 Kings">2 Kings</label> | 
+                    <input type="checkbox" id="1 Chronicles" value="1 Chronicles" name="book-select ot-books"><label for="1 Chronicles">1 Chronicles</label> | 
+                    <input type="checkbox" id="2 Chronicles" value="2 Chronicles" name="book-select ot-books"><label for="2 Chronicles">2 Chronicles</label> | 
+                    <input type="checkbox" id="Ezra" value="Ezra" name="book-select ot-books"><label for="Ezra">Ezra</label> | 
+                    <input type="checkbox" id="Nehemiah" value="Nehemiah" name="book-select ot-books"><label for="Nehemiah">Nehemiah</label> | 
+                    <input type="checkbox" id="Esther" value="Esther" name="book-select ot-books"><label for="Esther">Esther</label> | 
+                    <input type="checkbox" id="Job" value="Job" name="book-select ot-books"><label for="Job">Job</label> | 
+                    <input type="checkbox" id="Psalms" value="Psalms" name="book-select ot-books"><label for="Psalms">Psalms</label> | 
+                    <input type="checkbox" id="Proverbs" value="Proverbs" name="book-select ot-books"><label for="Proverbs">Proverbs</label> | 
+                    <input type="checkbox" id="Ecclesiastes" value="Ecclesiastes" name="book-select ot-books"><label for="Ecclesiastes">Ecclesiastes</label> | 
+                    <input type="checkbox" id="Song of Solomon" value="Song of Solomon" name="book-select ot-books"><label for="Song of Solomon">Song of Solomon</label> | 
+                    <input type="checkbox" id="Isaiah" value="Isaiah" name="book-select ot-books"><label for="Isaiah">Isaiah</label> | 
+                    <input type="checkbox" id="Jeremiah" value="Jeremiah" name="book-select ot-books"><label for="Jeremiah">Jeremiah</label> | 
+                    <input type="checkbox" id="Lamentations" value="Lamentations" name="book-select ot-books"><label for="Lamentations">Lamentations</label> | 
+                    <input type="checkbox" id="Ezekiel" value="Ezekiel" name="book-select ot-books"><label for="Ezekiel">Ezekiel</label> | 
+                    <input type="checkbox" id="Daniel" value="Daniel" name="book-select ot-books"><label for="Daniel">Daniel</label> | 
+                    <input type="checkbox" id="Hosea" value="Hosea" name="book-select ot-books"><label for="Hosea">Hosea</label> | 
+                    <input type="checkbox" id="Joel" value="Joel" name="book-select ot-books"><label for="Joel">Joel</label> | 
+                    <input type="checkbox" id="Amos" value="Amos" name="book-select ot-books"><label for="Amos">Amos</label> | 
+                    <input type="checkbox" id="Obadiah" value="Obadiah" name="book-select ot-books"><label for="Obadiah">Obadiah</label> | 
+                    <input type="checkbox" id="Jonah" value="Jonah" name="book-select ot-books"><label for="Jonah">Jonah</label> | 
+                    <input type="checkbox" id="Micah" value="Micah" name="book-select ot-books"><label for="Micah">Micah</label> | 
+                    <input type="checkbox" id="Nahum" value="Nahum" name="book-select ot-books"><label for="Nahum">Nahum</label> | 
+                    <input type="checkbox" id="Habakkuk" value="Habakkuk" name="book-select ot-books"><label for="Habakkuk">Habakkuk</label> | 
+                    <input type="checkbox" id="Zephaniah" value="Zephaniah" name="book-select ot-books"><label for="Zephaniah">Zephaniah</label> | 
+                    <input type="checkbox" id="Haggai" value="Haggai" name="book-select ot-books"><label for="Haggai">Haggai</label> | 
+                    <input type="checkbox" id="Zechariah" value="Zechariah" name="book-select ot-books"><label for="Zechariah">Zechariah</label> | 
+                    <input type="checkbox" id="Malachi" value="Malachi" name="book-select ot-books"><label for="Malachi">Malachi</label>
+                </fieldset>
+                <fieldset>
+                    <legend>New Testament <button type="button" onclick="selectAll('nt-books')">Select All</button> <button type="button" onclick="unselectAll('nt-books')">Unselect All</button></legend>
+                    <input type="checkbox" id="Matthew" value="Matthew" name="book-select nt-books"><label for="Matthew">Matthew</label> | 
+                    <input type="checkbox" id="Mark" value="Mark" name="book-select nt-books"><label for="Mark">Mark</label> | 
+                    <input type="checkbox" id="Luke" value="Luke" name="book-select nt-books"><label for="Luke">Luke</label> | 
+                    <input type="checkbox" id="John" value="John" name="book-select nt-books"><label for="John">John</label> | 
+                    <input type="checkbox" id="Acts" value="Acts" name="book-select nt-books"><label for="Acts">Acts</label> | 
+                    <input type="checkbox" id="Romans" value="Romans" name="book-select nt-books"><label for="Romans">Romans</label> | 
+                    <input type="checkbox" id="1 Corinthians" value="1 Corinthians" name="book-select nt-books"><label for="1 Corinthians">1 Corinthians</label> | 
+                    <input type="checkbox" id="2 Corinthians" value="2 Corinthians" name="book-select nt-books"><label for="2 Corinthians">2 Corinthians</label> | 
+                    <input type="checkbox" id="Galatians" value="Galatians" name="book-select nt-books"><label for="Galatians">Galatians</label> | 
+                    <input type="checkbox" id="Ephesians" value="Ephesians" name="book-select nt-books"><label for="Ephesians">Ephesians</label> | 
+                    <input type="checkbox" id="Philippians" value="Philippians" name="book-select nt-books"><label for="Philippians">Philippians</label> | 
+                    <input type="checkbox" id="Colossians" value="Colossians" name="book-select nt-books"><label for="Colossians">Colossians</label> | 
+                    <input type="checkbox" id="1 Thessalonians" value="1 Thessalonians" name="book-select nt-books"><label for="1 Thessalonians">1 Thessalonians</label> | 
+                    <input type="checkbox" id="2 Thessalonians" value="2 Thessalonians" name="book-select nt-books"><label for="2 Thessalonians">2 Thessalonians</label> | 
+                    <input type="checkbox" id="1 Timothy" value="1 Timothy" name="book-select nt-books"><label for="1 Timothy">1 Timothy</label> | 
+                    <input type="checkbox" id="2 Timothy" value="2 Timothy" name="book-select nt-books"><label for="2 Timothy">2 Timothy</label> | 
+                    <input type="checkbox" id="Titus" value="Titus" name="book-select nt-books"><label for="Titus">Titus</label> | 
+                    <input type="checkbox" id="Philemon" value="Philemon" name="book-select nt-books"><label for="Philemon">Philemon</label> | 
+                    <input type="checkbox" id="Hebrews" value="Hebrews" name="book-select nt-books"><label for="Hebrews">Hebrews</label> | 
+                    <input type="checkbox" id="James" value="James" name="book-select nt-books"><label for="James">James</label> | 
+                    <input type="checkbox" id="1 Peter" value="1 Peter" name="book-select nt-books"><label for="1 Peter">1 Peter</label> | 
+                    <input type="checkbox" id="2 Peter" value="2 Peter" name="book-select nt-books"><label for="2 Peter">2 Peter</label> | 
+                    <input type="checkbox" id="1 John" value="1 John" name="book-select nt-books"><label for="1 John">1 John</label> | 
+                    <input type="checkbox" id="2 John" value="2 John" name="book-select nt-books"><label for="2 John">2 John</label> | 
+                    <input type="checkbox" id="3 John" value="3 John" name="book-select nt-books"><label for="3 John">3 John</label> | 
+                    <input type="checkbox" id="Jude" value="Jude" name="book-select nt-books"><label for="Jude">Jude</label> | 
+                    <input type="checkbox" id="Revelation" value="Revelation" name="book-select nt-books"><label for="Revelation">Revelation</label>
+                </fieldset>
+                <fieldset>
+                    <legend>Book of Mormon <button type="button" onclick="selectAll('bom-books')">Select All</button> <button type="button" onclick="unselectAll('bom-books')">Unselect All</button></legend>
+                    <input type="checkbox" id="1 Nephi" value="1 Nephi" name="book-select bom-books"><label for="1 Nephi">1 Nephi</label> | 
+                    <input type="checkbox" id="2 Nephi" value="2 Nephi" name="book-select bom-books"><label for="2 Nephi">2 Nephi</label> | 
+                    <input type="checkbox" id="Jacob" value="Jacob" name="book-select bom-books"><label for="Jacob">Jacob</label> | 
+                    <input type="checkbox" id="Enos" value="Enos" name="book-select bom-books"><label for="Enos">Enos</label> | 
+                    <input type="checkbox" id="Jarom" value="Jarom" name="book-select bom-books"><label for="Jarom">Jarom</label> | 
+                    <input type="checkbox" id="Omni" value="Omni" name="book-select bom-books"><label for="Omni">Omni</label> | 
+                    <input type="checkbox" id="Words of Mormon" value="Words of Mormon" name="book-select bom-books"><label for="Words of Mormon">Words of Mormon</label> | 
+                    <input type="checkbox" id="Mosiah" value="Mosiah" name="book-select bom-books"><label for="Mosiah">Mosiah</label> | 
+                    <input type="checkbox" id="Alma" value="Alma" name="book-select bom-books"><label for="Alma">Alma</label> | 
+                    <input type="checkbox" id="Helaman" value="Helaman" name="book-select bom-books"><label for="Helaman">Helaman</label> | 
+                    <input type="checkbox" id="3 Nephi" value="3 Nephi" name="book-select bom-books"><label for="3 Nephi">3 Nephi</label> | 
+                    <input type="checkbox" id="4 Nephi" value="4 Nephi" name="book-select bom-books"><label for="4 Nephi">4 Nephi</label> | 
+                    <input type="checkbox" id="Mormon" value="Mormon" name="book-select bom-books"><label for="Mormon">Mormon</label> | 
+                    <input type="checkbox" id="Ether" value="Ether" name="book-select bom-books"><label for="Ether">Ether</label> | 
+                    <input type="checkbox" id="Moroni" value="Moroni" name="book-select bom-books"><label for="Moroni">Moroni</label>
+                </fieldset>
+                <!-- <input type="checkbox" id="select-ot" value="Old Testament" name="book-select"><label for="select-ot">Old Testament</label>
                 <br>
                 <input type="checkbox" id="select-nt" value="New Testament"name="book-select"><label for="select-nt">New Testament</label>
                 <br>
-                <input type="checkbox" id="select-bom" value="Book of Mormon" name="book-select"><label for="select-bom">Book of Mormon</label>
+                <input type="checkbox" id="select-bom" value="Book of Mormon" name="book-select"><label for="select-bom">Book of Mormon</label> -->
                 <br><br>
 
-                <button type="button" id="start-game" onclick="startGame()">Start Game</button>
+                <button type="button" id="start-game" class="submit-button" onclick="startGame()">Start Game</button>
             </form>
         </section>
 
@@ -33,7 +123,7 @@
             <br><br>
             <form>
                 <select name="scripture-books" id="scripture-books" class="answer-box"></select>
-                <button type="button" onclick="submitAnswer()" id="submit-button">Guess</button>
+                <button type="button" onclick="submitAnswer()" class="submit-button">Guess</button>
             </form>
             <p id="score"></p>
             <br><br><br>
@@ -103,8 +193,8 @@
         };
 
         function getSelectedScriptures() {
-            const selectedVolumes = [...document.querySelectorAll('input[name="book-select"]:checked')].map(checkbox => checkbox.value);
-            return scripturesAll.filter(verse => selectedVolumes.includes(verse.volume_title));
+            const selectedVolumes = [...document.querySelectorAll('input[name~="book-select"]:checked')].map(checkbox => checkbox.value);
+            return scripturesAll.filter(verse => selectedVolumes.includes(verse.book_title));
         };
 
         function getRandomScripture() {
@@ -129,9 +219,19 @@
             setTimeout(() => {
                 document.getElementById('correct-answer').textContent = '';
                 getRandomScripture();
-            },1000);
+            },1000); 
+        };
 
-            
+        function selectAll(book) {
+            document.querySelectorAll(`input[name~="${book}"]`).forEach(checkbox => {
+                checkbox.checked = true;
+            });
+        };
+
+        function unselectAll(book) {
+            document.querySelectorAll(`input[name~="${book}"]`).forEach(checkbox => {
+                checkbox.checked = false;
+            });
         };
         
     </script>

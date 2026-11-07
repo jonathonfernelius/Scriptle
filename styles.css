@@ -15,7 +15,7 @@ html {
 
 @media (max-width: 680px) {
     .random-scripture {
-        height: 15rem;
+        height: 25rem;
     }
 }
 
@@ -24,7 +24,7 @@ html {
     margin: 0;
 }
 
-legend {
+.title {
     font-size: 20px;
 }
 
@@ -35,7 +35,7 @@ legend {
     text-align: justify;
 }
 
-#scripture-books, #submit-button {
+#scripture-books, .submit-button {
     font-size: 1.2rem;
     padding: 0.6rem 1rem;
     min-height: 3rem;
