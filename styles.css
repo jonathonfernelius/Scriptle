@@ -34,3 +34,13 @@ legend {
     padding-inline: 16px;
     text-align: justify;
 }
+
+#scripture-books, #submit-button {
+    font-size: 1.2rem;
+    padding: 0.6rem 1rem;
+    min-height: 3rem;
+}
+
+#scripture-books {
+    min-width: 14rem;
+}
