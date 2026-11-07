@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scriptle</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <fieldset>
+        <legend>Scriptle</legend>
+        <!-- Menu / Select scriptures to guess -->
+        <section id="menu">
+            <form>
+                <h3>Select which books of scripture you want to guess from:</h3>
+                <input type="checkbox" id="select-ot" value="Old Testament" name="book-select"><label for="select-ot">Old Testament</label>
+                <br>
+                <input type="checkbox" id="select-nt" value="New Testament"name="book-select"><label for="select-nt">New Testament</label>
+                <br>
+                <input type="checkbox" id="select-bom" value="Book of Mormon" name="book-select"><label for="select-bom">Book of Mormon</label>
+                <br><br>
+
+                <button type="button" id="start-game" onclick="startGame()">Start Game</button>
+            </form>
+        </section>
+
+        <!-- Guess the scriptures -->
+        <section id="game" hidden>
+            <div>
+                <p id="random-scripture" class="random-scripture">yo whats up homeslice</div>
+                <p id="correct-answer" class="correct-answer"></p>
+            </div>
+            <br><br>
+            <form>
+                <select name="scripture-books" id="scripture-books" class="answer-box"></select>
+                <button type="button" onclick="submitAnswer()">Guess</button>
+            </form>
+            <p id="score"></p>
+            <br><br><br>
+            <button type="button" id="return-to-menu" onclick="returnToMenu()" class="centered">Return To Menu</button>
+        </section>
+    </fieldset>
+
+    <!-- Story/Explanation of Scriptle -->
+    <section class="story">
+        <p>
+            Hello! This is Scriptle, a game I (Jonathon A. Fernelius) thought of over the summer 
+            of 2026. It is a simple  concept: the program pulls a random scripture, and you have 
+            to guess which part of the scriptures it's from. You will start by selecting which books 
+            of scripture you want to make the pool of possibilities, then you will press start and 
+            the game will begin!
+            <br><br>
+            If you have any questions, or want to suggest any additions to the game, please feel free
+            to contact me!
+        </p>
+    </section>
+
+    <script>
+        let scripturesAll = [];
+        let scripturesPool = [];
+        let scriptureCurrent;
+        let correctNum;
+        let totalGuessed;
+        let guess;
+        let correctAnswer;
+        fetch('./scriptures.json').then(response => response.json()).then(scriptures => scripturesAll = scriptures);
+
+        function startGame() {
+            // Grab all the scriptures based off selected books
+            scripturesPool = getSelectedScriptures()
+            if (scripturesPool.length === 0) {
+                alert('You must select at least one book of scripture to play the game!');
+                return;
+            };
+
+            // Get book titles into selectbox
+            let answerBox = document.getElementById('scripture-books');
+            answerBox.replaceChildren();
+            let applicableBooks = new Set(
+                scripturesPool.map(verse => verse.book_title)
+            );
+            applicableBooks.forEach(bookTitle => {
+                let option = document.createElement('option');
+                option.value = bookTitle;
+                option.textContent = bookTitle;
+                answerBox.append(option);
+            });
+
+            // Initialize score and first random scripture
+            correctNum = 0;
+            totalGuessed = 0;
+            document.getElementById('score').textContent = ''
+            getRandomScripture();
+
+            // Change visible screen
+            document.getElementById('menu').hidden = true;
+            document.getElementById('game').hidden = false;
+        };
+
+        function returnToMenu() {
+            document.getElementById('game').hidden = true;
+            document.getElementById('menu').hidden = false;
+        };
+
+        function getSelectedScriptures() {
+            const selectedVolumes = [...document.querySelectorAll('input[name="book-select"]:checked')].map(checkbox => checkbox.value);
+            return scripturesAll.filter(verse => selectedVolumes.includes(verse.volume_title));
+        };
+
+        function getRandomScripture() {
+            const randomIndex = Math.floor(Math.random() * scripturesPool.length);
+            scriptureCurrent = scripturesPool[randomIndex];
+
+            document.getElementById('random-scripture').textContent = scriptureCurrent.scripture_text;
+            correctAnswer = scriptureCurrent.book_title;
+        };
+
+        function submitAnswer() {
+            totalGuessed += 1;
+            guess = document.getElementById('scripture-books').value;
+
+            if (guess == correctAnswer) {
+                correctNum += 1;
+            };
+
+            document.getElementById('score').textContent = `${correctNum} / ${totalGuessed} (${correctNum / totalGuessed * 100}%)`;
+            document.getElementById('correct-answer').textContent = scriptureCurrent.verse_title;
+
+            setTimeout(() => {
+                document.getElementById('correct-answer').textContent = '';
+                getRandomScripture();
+            },1000);
+
+            
+        };
+        
+    </script>
+</body>
+</html>

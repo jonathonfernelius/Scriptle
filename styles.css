@@ -1,0 +1,30 @@
+html {
+    display: block;
+    text-align: center;
+    margin-inline: auto;
+}
+
+.random-scripture {
+    font-size: 24px;
+    height: 10rem;
+    overflow-y: auto;
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+}
+
+.correct-answer {
+    height: 1.5em;
+    margin: 0;
+}
+
+legend {
+    font-size: 20px;
+}
+
+.story {
+    width: 50%;
+    margin-inline: auto;
+    padding-inline: 16px;
+    text-align: justify;
+}

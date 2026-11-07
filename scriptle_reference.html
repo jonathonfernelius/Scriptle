@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scriptle — HTML and JavaScript Reference</title>
+  <style>
+    /* Small, plain styles so the example stays easy to read and change. */
+    body {
+      max-width: 850px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      color: #222;
+      font: 1rem/1.5 system-ui, sans-serif;
+    }
+
+    fieldset { margin: 1rem 0; }
+    #book-choices { display: grid; gap: 1rem; }
+    .volume-group { border: 1px solid #ddd; padding: 0.75rem; }
+    .book-list { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; }
+    label { display: inline-flex; align-items: center; gap: 0.35rem; }
+    button, select { margin: 0.5rem 0.5rem 0.5rem 0; padding: 0.45rem 0.7rem; }
+    #verse-text { font-size: 1.15rem; }
+    #status { color: #8a2d20; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <h1>Scriptle</h1>
+  <p>Choose the books that can appear, then guess which book each verse came from.</p>
+
+  <p id="status" role="status">Loading scriptures…</p>
+
+  <section id="setup" hidden>
+    <h2>Choose books</h2>
+    <p>Select one or more books. The game will only use verses from those books.</p>
+    <div id="book-choices"></div>
+    <button id="start-game" type="button" disabled>Start game</button>
+  </section>
+
+  <section id="game" hidden>
+    <h2>Which book is this verse from?</h2>
+    <blockquote id="verse-text"></blockquote>
+
+    <label for="book-guess">Your guess:</label>
+    <select id="book-guess"></select>
+    <button id="submit-guess" type="button">Submit</button>
+    <button id="next-verse" type="button" hidden>Next verse</button>
+    <p id="result" aria-live="polite"></p>
+    <p>Score: <span id="score">0 / 0</span></p>
+    <button id="change-books" type="button">Change selected books</button>
+  </section>
+
+  <script>
+    "use strict";
+
+    // The JSON file contains one object per verse. `allScriptures` is the full
+    // dataset; `scripturePool` is the smaller list used in the current game.
+    let allScriptures = [];
+    let scripturePool = [];
+    let currentScripture = null;
+    let totalAnswered = 0;
+    let totalCorrect = 0;
+
+    const status = document.querySelector("#status");
+    const setupSection = document.querySelector("#setup");
+    const gameSection = document.querySelector("#game");
+    const bookChoices = document.querySelector("#book-choices");
+    const startButton = document.querySelector("#start-game");
+    const guessSelect = document.querySelector("#book-guess");
+    const verseText = document.querySelector("#verse-text");
+    const result = document.querySelector("#result");
+    const score = document.querySelector("#score");
+
+    // Read scriptures.json next to this HTML file. Browsers usually require
+    // running a local web server for fetch(); opening the HTML as file:// may
+    // prevent the JSON request. See the note below the example for a command.
+    async function loadScriptures() {
+      try {
+        const response = await fetch("./scriptures.json");
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status} while loading scriptures.json`);
+        }
+
+        allScriptures = await response.json();
+        makeBookChoices(allScriptures);
+        setupSection.hidden = false;
+        status.hidden = true;
+      } catch (error) {
+        status.textContent =
+          "Could not load scriptures.json. Run a local web server in this folder, then open this page through localhost.";
+        console.error(error);
+      }
+    }
+
+    // Create one checkbox per distinct book in the JSON. The volume title is
+    // shown as a heading, but choosing an entire volume is just a convenience:
+    // the actual selection is still a set of individual books.
+    function makeBookChoices(scriptures) {
+      const booksByVolume = new Map();
+
+      for (const verse of scriptures) {
+        if (!booksByVolume.has(verse.volume_title)) {
+          booksByVolume.set(verse.volume_title, new Set());
+        }
+        booksByVolume.get(verse.volume_title).add(verse.book_title);
+      }
+
+      for (const [volumeTitle, bookSet] of booksByVolume) {
+        const group = document.createElement("fieldset");
+        group.className = "volume-group";
+
+        const legend = document.createElement("legend");
+        legend.textContent = volumeTitle;
+        group.append(legend);
+
+        const allButton = document.createElement("button");
+        allButton.type = "button";
+        allButton.textContent = `Select all ${volumeTitle} books`;
+        group.append(allButton);
+
+        const list = document.createElement("div");
+        list.className = "book-list";
+
+        // Keep the same order as the books first appear in the JSON file.
+        for (const bookTitle of bookSet) {
+          const label = document.createElement("label");
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.className = "book-choice";
+          checkbox.value = bookTitle;
+          checkbox.dataset.volume = volumeTitle;
+          checkbox.addEventListener("change", updateStartButton);
+
+          label.append(checkbox, document.createTextNode(bookTitle));
+          list.append(label);
+        }
+
+        allButton.addEventListener("click", () => {
+          list.querySelectorAll(".book-choice").forEach((checkbox) => {
+            checkbox.checked = true;
+          });
+          updateStartButton();
+        });
+
+        group.append(list);
+        bookChoices.append(group);
+      }
+    }
+
+    // The start button is only available when at least one book is selected.
+    function updateStartButton() {
+      startButton.disabled =
+        document.querySelectorAll(".book-choice:checked").length === 0;
+    }
+
+    // Convert the checkbox selections into the verse pool. Filtering the
+    // original JSON this way includes every verse whose book was selected.
+    function startGame() {
+      const selectedBooks = new Set(
+        [...document.querySelectorAll(".book-choice:checked")]
+          .map((checkbox) => checkbox.value)
+      );
+
+      scripturePool = allScriptures.filter((verse) =>
+        selectedBooks.has(verse.book_title)
+      );
+
+      // Build the answer dropdown from books that are actually in this pool.
+      // A Set removes duplicates because each book has many verse entries.
+      const applicableBooks = [...new Set(
+        scripturePool.map((verse) => verse.book_title)
+      )];
+      guessSelect.replaceChildren();
+      for (const bookTitle of applicableBooks) {
+        const option = document.createElement("option");
+        option.value = bookTitle;
+        option.textContent = bookTitle;
+        guessSelect.append(option);
+      }
+
+      totalAnswered = 0;
+      totalCorrect = 0;
+      updateScore();
+      setupSection.hidden = true;
+      gameSection.hidden = false;
+      showRandomVerse();
+    }
+
+    // Math.random() gives a number from 0 (inclusive) to 1 (exclusive).
+    // Multiplying by the pool length and rounding down makes a valid index.
+    function showRandomVerse() {
+      const randomIndex = Math.floor(Math.random() * scripturePool.length);
+      currentScripture = scripturePool[randomIndex];
+
+      verseText.textContent = currentScripture.scripture_text;
+      result.textContent = "";
+      guessSelect.disabled = false;
+      document.querySelector("#submit-guess").hidden = false;
+      document.querySelector("#next-verse").hidden = true;
+    }
+
+    // Compare the selected book with the book on the current verse, update
+    // the score, and reveal the reference so the player can learn the answer.
+    function submitGuess() {
+      const isCorrect = guessSelect.value === currentScripture.book_title;
+      totalAnswered += 1;
+      if (isCorrect) totalCorrect += 1;
+
+      result.textContent = `${isCorrect ? "Correct!" : "Not quite."} Answer: ${currentScripture.verse_title}`;
+      guessSelect.disabled = true;
+      document.querySelector("#submit-guess").hidden = true;
+      document.querySelector("#next-verse").hidden = false;
+      updateScore();
+    }
+
+    function updateScore() {
+      score.textContent = `${totalCorrect} / ${totalAnswered}`;
+    }
+
+    startButton.addEventListener("click", startGame);
+    document.querySelector("#submit-guess").addEventListener("click", submitGuess);
+    document.querySelector("#next-verse").addEventListener("click", showRandomVerse);
+    document.querySelector("#change-books").addEventListener("click", () => {
+      gameSection.hidden = true;
+      setupSection.hidden = false;
+    });
+
+    loadScriptures();
+  </script>
+
+  <details>
+    <summary>Run this reference page</summary>
+    <p>From this project folder, run <code>python -m http.server 8000</code>, then open <code>http://localhost:8000/scriptle_reference.html</code>.</p>
+  </details>
+</body>
+</html>
