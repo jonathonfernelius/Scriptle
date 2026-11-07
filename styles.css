@@ -13,6 +13,12 @@ html {
     box-sizing: border-box;
 }
 
+@media (max-width: 680px) {
+    .random-scripture {
+        height: 15rem;
+    }
+}
+
 .correct-answer {
     height: 1.5em;
     margin: 0;
