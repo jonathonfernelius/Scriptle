@@ -134,7 +134,7 @@
             <br><br>
             <form>
                 <select name="scripture-books" id="scripture-books" class="answer-box"></select>
-                <button type="button" onclick="submitAnswer()" class="submit-button">Guess</button>
+                <button type="button" onclick="submitAnswer()" class="submit-button" id="submit-button">Guess</button>
             </form>
             <p id="score"></p>
             <br><br><br>
@@ -224,19 +224,29 @@
             // Change visible screen
             document.getElementById('menu').hidden = true;
             document.getElementById('game').hidden = false;
+
+            // Go back to top of page
+            window.scrollTo({top: 0, behavior:"smooth"});
         };
 
         function returnToMenu() {
             document.getElementById('game').hidden = true;
             document.getElementById('menu').hidden = false;
             document.getElementById('settings').hidden = true;
+
+            // Go back to top of page
+            window.scrollTo({top: 0, behavior:"smooth"});
         };
 
         function goToSettings() {
             document.getElementById('game').hidden = true;
             document.getElementById('menu').hidden = true;
             document.getElementById('settings').hidden = false;
+
+            // Go back to top of page
+            window.scrollTo({top: 0, behavior:"smooth"});
         };
+
 
         function getSelectedScriptures() {
             const selectedVolumes = [...document.querySelectorAll('input[name~="book-select"]:checked')].map(checkbox => checkbox.value);
@@ -264,6 +274,7 @@
         };
 
         function submitAnswer() {
+            document.getElementById('submit-button').disabled = true;
             totalGuessed += 1;
             guess = document.getElementById('scripture-books').value;
 
@@ -283,8 +294,8 @@
             setTimeout(() => {
                 document.getElementById('correct-answer').textContent = '';
                 getRandomScripture();
+                document.getElementById('submit-button').disabled = false;
             },1000); 
-
         };
 
         function selectAll(book) {
